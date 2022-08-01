@@ -1,0 +1,4 @@
+Создание таблицы в БД PostgreSQL: 
+
+CREATE TABLE ORDERS ("№" integer PRIMARY KEY,
+"заказ №" integer, "стоимость,$" integer, "срок поставки" date, "стоимость в руб." integer);
