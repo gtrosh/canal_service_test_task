@@ -1,10 +1,13 @@
-import apiclient.discovery
 import datetime
+import urllib.error
+import urllib.parse
+import urllib.request
+import xml.etree.ElementTree as ET
+
+import apiclient.discovery
 import gspread
 import httplib2
 import psycopg2
-import urllib.request, urllib.parse, urllib.error
-import xml.etree.ElementTree as ET
 from oauth2client.service_account import ServiceAccountCredentials
 from psycopg2 import extras
 
@@ -21,7 +24,8 @@ def get_exchange_rate(url):
     '''Возвращает стоимость одного доллара США в рублях по курсу ЦБ РФ'''
     html = urllib.request.urlopen(link).read().decode(encoding="windows-1251")
     data = ET.fromstring(html)
-    usd_exchange_rate = float((data.find("Valute[@ID='R01235']/Value").text).replace(',', '.'))
+    usd_exchange_rate = float(
+        (data.find("Valute[@ID='R01235']/Value").text).replace(',', '.'))
     return usd_exchange_rate
 
 
@@ -54,7 +58,7 @@ CONNECTION, CURSOR = connect_to_database()
 
 # Проверка данных, содержащихся в БД PostgreSQL
 database_orders = get_order_numbers(CONNECTION, CURSOR)
-current_orders = [int(order[1]) for order in order_data]
+current_orders = [int(order[1]) for order in order_data[1:]]
 obsolete_orders = tuple()
 for order in database_orders:
     if order not in current_orders:
@@ -69,7 +73,7 @@ link = 'https://www.cbr.ru/scripts/XML_daily.asp'
 exchange_rate = get_exchange_rate(link)
 
 # Форматирование полученных данных перед добавлением в таблицу
-for order in order_data:
+for order in order_data[1:]:
     for i in range(3):
         order[i] = int(order[i])
     order[3] = datetime.datetime.strptime(order[3], "%d.%m.%Y").date()
@@ -77,12 +81,13 @@ for order in order_data:
     order += [int(ruble_price)]
 
 # Обработка информации, которую необходимо записать в базу данных PostgreSQL
-orders = [tuple(order) for order in order_data]
+orders = [tuple(order) for order in order_data[1:]]
 
 args = ','.join(CURSOR.mogrify("(%s,%s,%s,%s,%s)", i).decode('utf-8')
                 for i in orders)
-               
-insert_query = "INSERT INTO orders VALUES " + (args) + ' on conflict ("заказ №") do update set "стоимость,$"=excluded."стоимость,$", "срок поставки"=excluded."срок поставки", "стоимость в руб."=excluded."стоимость в руб."'
+
+insert_query = "INSERT INTO orders VALUES " + \
+    (args) + ' on conflict ("заказ №") do update set "стоимость,$"=excluded."стоимость,$", "срок поставки"=excluded."срок поставки", "стоимость в руб."=excluded."стоимость в руб."'
 CURSOR.execute(insert_query)
 CONNECTION.commit()
 CONNECTION.close()
