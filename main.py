@@ -91,3 +91,4 @@ insert_query = "INSERT INTO orders VALUES " + \
 CURSOR.execute(insert_query)
 CONNECTION.commit()
 CONNECTION.close()
+print("Скрипт успешно завершил работу!")
