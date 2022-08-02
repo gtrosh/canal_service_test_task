@@ -2,3 +2,7 @@
 
 CREATE TABLE ORDERS ("№" integer PRIMARY KEY,
 "заказ №" integer, "стоимость,$" integer, "срок поставки" date, "стоимость в руб." integer);
+
+Обновлено:
+CREATE TABLE ORDERS ("№" integer PRIMARY KEY,
+"заказ №" integer UNIQUE, "стоимость,$" integer, "срок поставки" date, "стоимость в руб." integer);
