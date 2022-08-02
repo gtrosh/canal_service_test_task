@@ -41,16 +41,16 @@ def delete_orders(CONNECTION, CURSOR, orders):
     CONNECTION.commit()
 
 
-# Подключение к БД PostgreSQL
-CONNECTION, CURSOR = connect_to_database()
-
 # Открытие документа Google Sheets
 sa = gspread.service_account(filename="creds.json")
 sh = sa.open("Copy of test")
 
-# Чтение данных из документа
+# Чтение данных из документа Google Sheets
 worksheet = sh.worksheet("Лист1")
 order_data = worksheet.get_all_values()
+
+# Подключение к БД PostgreSQL
+CONNECTION, CURSOR = connect_to_database()
 
 # Проверка данных, содержащихся в БД PostgreSQL
 database_orders = get_order_numbers(CONNECTION, CURSOR)
