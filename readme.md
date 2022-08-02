@@ -2,9 +2,9 @@
 ## Клонирование репозитория
 ```bash
 # создайте папку для вашего проекта
-mkdir your-folder-name
+mkdir <название-вашей-папки>
 # перейдите в эту папку:
-cd your-folder-name
+cd <название-вашей-папки>
 # склонируйте этот репозиторий:
 git@github.com:gtrosh/canal_service_test_task.git
 ```
