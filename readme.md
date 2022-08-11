@@ -6,7 +6,7 @@ mkdir <название-вашей-папки>
 # перейдите в эту папку:
 cd <название-вашей-папки>
 # склонируйте этот репозиторий:
-git@github.com:gtrosh/canal_service_test_task.git
+git@github.com:gtrosh/google_sheets_to_postgres_downloader.git
 ```
 
 ## Установка зависимостей
